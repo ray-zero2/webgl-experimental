@@ -10,11 +10,14 @@ varying vec2 vUv;
 
 void main(){
 
+  vec4 samplerColor = vec4(0.);
+
   if(isFxaa) {
     vec2 fragCoord = vUv * resolution;
-    gl_FragColor = fxaa(frameTexture, fragCoord, resolution);
+    samplerColor = fxaa(frameTexture, fragCoord, resolution);
   } else {
-    vec4 samplerColor = texture2D(frameTexture, vUv);
-    gl_FragColor = samplerColor * vec4(vec3(brightness), 1.0);
+    samplerColor = texture2D(frameTexture, vUv);
   }
+
+  gl_FragColor = samplerColor * vec4(vec3(brightness), 1.0);
 }
