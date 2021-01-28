@@ -14,6 +14,7 @@ module.exports = (env, argv) => {
     output: {
       path: path.join(__dirname, './public/js'),
       filename: '[name].bundle.js',
+      chunkFilename: '[id].bundle.js',
     },
     devtool: isDev ? 'eval-cheap-module-source-map' : false,
     cache: {

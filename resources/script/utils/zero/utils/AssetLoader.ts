@@ -1,10 +1,16 @@
-import * as THREE from 'three';
+import {
+  Texture,
+  TextureLoader,
+  Object3D,
+  LoadingManager,
+} from 'three';
+
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 interface AssetParams {
-  path: string,
-  name: string
+  name: string,
+  src: string,
 }
 
 interface Callbacks {
@@ -12,6 +18,10 @@ interface Callbacks {
   onProgress: (url?: string, itemsLoaded?: number, itemsTotal?: number) => void;
   onError: (url?: string) => void;
 };
+
+export interface TextureAssets { [ key: string ] : Texture };
+export interface GLTFAssets { [ key: string ] : GLTF };
+export interface OBJAssets { [ key: string ] : Object3D };
 
 type LoadSrc = {
   texture: AssetParams[],
@@ -21,13 +31,13 @@ type LoadSrc = {
 
 export class AssetLoader {
 
-  public manager: THREE.LoadingManager;
-  public textures: { [ key: string ] : THREE.Texture }
-  public gltfData: { [ key: string ] : GLTF }
-  public objData: { [ key: string ] : THREE.Object3D }
+  protected manager: LoadingManager;
+  protected textures: TextureAssets;
+  protected gltfData: GLTFAssets;
+  protected objData: OBJAssets;
 
   constructor(callbacks: Partial<Callbacks>) {
-    this.manager = new THREE.LoadingManager();
+    this.manager = new LoadingManager();
 
     if(callbacks.onLoad) this.manager.onLoad = callbacks.onLoad;
     if(callbacks.onProgress) this.manager.onProgress = callbacks.onProgress;
@@ -38,37 +48,49 @@ export class AssetLoader {
     this.objData = {};
   }
 
+  public getTexture(): TextureAssets {
+    return this.textures;
+  }
+
+  public getGLTF(): GLTFAssets {
+    return this.gltfData;
+  }
+
+  public getOBJ(): OBJAssets {
+    return this.objData;
+  }
+
   public load(data: Partial<LoadSrc>) {
     if(data.texture) this.loadTexture(data.texture);
     if(data.obj) this.loadObj(data.obj);
     if(data.gltf) this.loadGltf(data.gltf);
   }
 
-  private loadTexture(dataArray: AssetParams[]) {
+  protected loadTexture(dataArray: AssetParams[]) {
     dataArray.forEach(data => {
-      const loader = new THREE.TextureLoader(this.manager);
+      const loader = new TextureLoader(this.manager);
       loader.crossOrigin = 'use-credentials';
-      loader.load(data.path, texture => {
+      loader.load(data.src, texture => {
         this.textures[data.name] = texture;
       });
     });
   }
 
-  private loadObj(dataArray: AssetParams[]) {
+  protected loadObj(dataArray: AssetParams[]) {
     dataArray.forEach(data => {
       const loader = new OBJLoader2(this.manager);
       loader.crossOrigin = 'use-credentials';
-      loader.load(data.path, obj => {
+      loader.load(data.src, obj => {
         this.objData[data.name] = obj;
       });
     });
   }
 
-  private loadGltf(dataArray: AssetParams[]) {
+  protected loadGltf(dataArray: AssetParams[]) {
     dataArray.forEach(data => {
       const loader = new GLTFLoader(this.manager);
       loader.crossOrigin = 'use-credentials';
-      loader.load(data.path, gltf => {
+      loader.load(data.src, gltf => {
         this.gltfData[data.name] = gltf;
       });
     });

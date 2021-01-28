@@ -15,7 +15,7 @@ interface Controls {
   dampingFactor: number;
 }
 
-type Options = Partial <PerspectiveCameraParams & Controls>
+export type PerspectiveCameraOptions = Partial <PerspectiveCameraParams & Controls>
 
 export class PerspectiveCamera extends THREE.PerspectiveCamera {
 
@@ -24,7 +24,7 @@ export class PerspectiveCamera extends THREE.PerspectiveCamera {
   protected canControl: boolean;
 
 
-  constructor(options?: Options) {
+  constructor(options?: PerspectiveCameraOptions) {
     super(options?.fov, options?.aspect, options?.near, options?.far);
 
     this.time = 0;
@@ -39,7 +39,7 @@ export class PerspectiveCamera extends THREE.PerspectiveCamera {
   }
 
   init() {
-    this.position.set(-5, 5, 20);
+    this.position.set(0, 0, 20);
     this.lookAt(new THREE.Vector3(0, 0, 0));
   }
 
