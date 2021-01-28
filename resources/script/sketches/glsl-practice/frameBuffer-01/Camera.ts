@@ -7,6 +7,6 @@ export class Camera extends ZERO.PerspectiveCamera {
 
   init() {
     super.init();
-    this.position.set(0, 0, 5);
+    this.position.set(0, 0, 100);
   }
 }

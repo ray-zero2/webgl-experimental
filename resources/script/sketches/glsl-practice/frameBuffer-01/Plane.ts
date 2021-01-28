@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { GUI } from 'three/examples/jsm/libs/dat.gui.module';
+
 import { PlaneBufferGeometry, RawShaderMaterial } from 'three';
 
 import { TextureAssets } from '../../../utils/zero';
@@ -6,7 +8,12 @@ import { TextureAssets } from '../../../utils/zero';
 import planeVert from './shaders/plane.vert';
 import planeFrag from './shaders/plane.frag';
 
+
 export class Plane extends THREE.Mesh {
+  public isBillboard: boolean;
+
+  private gui?: GUI;
+
 
   constructor(assets: TextureAssets) {
 
@@ -19,7 +26,7 @@ export class Plane extends THREE.Mesh {
     // uvTex.minFilter = THREE.NearestFilter;
     // uvTex.magFilter = THREE.NearestFilter;
 
-    const geometry = new PlaneBufferGeometry(2, 2);
+    const geometry = new PlaneBufferGeometry(50, 50);
 
     const material = new RawShaderMaterial({
       vertexShader: planeVert,
@@ -32,11 +39,16 @@ export class Plane extends THREE.Mesh {
     })
 
     super(geometry, material);
-
+    this.isBillboard = false;
   }
 
-  update(deltaTIme: number) {
-    (this.material as THREE.RawShaderMaterial).uniforms.time.value += deltaTIme;
+  public update(deltaTIme: number, camera?: THREE.Camera) {
+    if(this.isBillboard && camera) this.rotation.copy(camera.rotation);
 
+    (this.material as THREE.RawShaderMaterial).uniforms.time.value += deltaTIme;
+  }
+
+  public setGui(gui: GUI) {
+    this.gui = gui;
   }
 }

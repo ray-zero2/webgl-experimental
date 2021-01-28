@@ -32,6 +32,7 @@
   "dependencies": {
     "dat.gui": "^0.7.7",
     "glsl-easings": "^1.0.0",
+    "glsl-fxaa": "^3.0.0",
     "three": "^0.124.0"
   }
 }
