@@ -3,7 +3,7 @@ import { GUI } from 'three/examples/jsm/libs/dat.gui.module';
 
 import simpleVertex from '../shader/simpleVertex.glsl';
 
-export class PostProcess {
+export abstract class PostProcess {
 
   public name: string;
   public time: number;
@@ -22,9 +22,7 @@ export class PostProcess {
   protected gui?: GUI;
   protected guiFolder?: any;
 
-
-
-  constructor(renderer: THREE.WebGLRenderer,resolution: THREE.Vector2) {
+  constructor(renderer: THREE.WebGLRenderer, resolution: THREE.Vector2) {
     this.name = 'Post Effect';
 
     this.time = 0;
@@ -75,11 +73,7 @@ export class PostProcess {
     return this;
   }
 
-  public getRenderTarget(): THREE.WebGLRenderTarget {
-    return this.writeTarget;
-  }
-
-  public render(origScene: THREE.Scene, origCamera: THREE.Camera, deltaTime: number) {
+  public render(origScene: THREE.Scene, origCamera: THREE.Camera, deltaTime: number): THREE.Texture {
     this.time += deltaTime;
 
     const defaultTarget = this.renderer.getRenderTarget();
