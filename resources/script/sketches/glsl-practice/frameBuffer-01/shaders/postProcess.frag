@@ -1,5 +1,6 @@
-precision mediump float;
-uniform sampler2D frameTexture;
+precision highp float;
+
+uniform sampler2D bufferTexture;
 uniform vec2 resolution;
 uniform float brightness;
 uniform bool isFxaa;
@@ -14,10 +15,11 @@ void main(){
 
   if(isFxaa) {
     vec2 fragCoord = vUv * resolution;
-    samplerColor = fxaa(frameTexture, fragCoord, resolution);
+    samplerColor = fxaa(bufferTexture, fragCoord, resolution);
   } else {
-    samplerColor = texture2D(frameTexture, vUv);
+    samplerColor = texture2D(bufferTexture, vUv);
   }
 
   gl_FragColor = samplerColor * vec4(vec3(brightness), 1.0);
+  // gl_FragColor = samplerColor * vec4(vec3(.2), 1.0);
 }

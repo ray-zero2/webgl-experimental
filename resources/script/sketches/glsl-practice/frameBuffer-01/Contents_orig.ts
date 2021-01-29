@@ -7,8 +7,7 @@ import { TextureAssets } from '../../../utils/zero';
 
 import { Camera } from './Camera';
 import { Plane } from './Plane';
-import { PostProcess } from './PostProcess';
-
+import { PostEffect } from './PostEffect';
 
 export class Contents {
 
@@ -21,7 +20,7 @@ export class Contents {
   private scene: THREE.Scene;
   private camera: Camera;
 
-  private postProcess: PostProcess;
+  private postEffect: PostEffect;
 
   private stats: Stats = Stats();
   private gui: GUI = new GUI();
@@ -31,14 +30,14 @@ export class Contents {
 
     this.renderer = new THREE.WebGLRenderer({
       canvas,
-      alpha: true,
+      // antialias: true,
+      alpha: true
     })
 
 
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setClearColor(0x0e0e0e, 1.0);
     this.renderer.setSize(this.resolution.x, this.resolution.y);
-    this.renderer.autoClear = false;
     this.rendererTarget = new THREE.WebGLRenderTarget(this.resolution.x, this.resolution.y, {
       magFilter: THREE.LinearFilter,
       minFilter: THREE.LinearFilter
@@ -54,7 +53,7 @@ export class Contents {
     });
 
     this.plane = null;
-    this.postProcess = new PostProcess(this.renderer, this.resolution);
+    this.postEffect = new PostEffect(this.resolution);
 
     this.time = 0;
   }
@@ -62,22 +61,29 @@ export class Contents {
   public update(deltaTime: number) {
     this.stats.begin();
 
-    this.renderer.setRenderTarget(null);
-    this.renderer.clear();
-
     this.time += deltaTime;
 
+
     this.camera.update(deltaTime);
+
     this.plane!.update(deltaTime);
 
-    this.postProcess.render(this.scene, this.camera, deltaTime);
+    // change renderTarget
+    // render in renderTarget
+    // update postEffect component
+    // change original renderTarget
+    // render
+    this.renderer.setRenderTarget(this.rendererTarget);
+    this.renderer.render(this.scene, this.camera);
+
+    this.postEffect.render(this.renderer, deltaTime, { 'frame': this.rendererTarget.texture });
 
     this.stats.end();
   }
 
   public resize( resolution: THREE.Vector2 ) {
     this.resolution = resolution;
-    this.postProcess.resize(this.resolution);
+    this.postEffect.resize(this.resolution);
     this.camera.resize(this.resolution);
     this.renderer.setSize(this.resolution.x, this.resolution.y);
   }
@@ -93,6 +99,6 @@ export class Contents {
 
   private setGui() {
     this.plane!.setGui(this.gui);
-    this.postProcess.setGui(this.gui);
+    this.postEffect.setGui(this.gui);
   }
 }
