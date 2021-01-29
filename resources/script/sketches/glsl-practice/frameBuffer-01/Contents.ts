@@ -17,7 +17,6 @@ export class Contents {
   private plane: Plane | null;
   private resolution: THREE.Vector2;
   private renderer: THREE.WebGLRenderer;
-  private rendererTarget: THREE.WebGLRenderTarget;
   private scene: THREE.Scene;
   private camera: Camera;
 
@@ -39,10 +38,6 @@ export class Contents {
     this.renderer.setClearColor(0x0e0e0e, 1.0);
     this.renderer.setSize(this.resolution.x, this.resolution.y);
     this.renderer.autoClear = false;
-    this.rendererTarget = new THREE.WebGLRenderTarget(this.resolution.x, this.resolution.y, {
-      magFilter: THREE.LinearFilter,
-      minFilter: THREE.LinearFilter
-    });
 
     this.scene = new THREE.Scene();
     this.camera = new Camera({
@@ -63,7 +58,6 @@ export class Contents {
     this.stats.begin();
 
     this.renderer.setRenderTarget(null);
-    this.renderer.clear();
 
     this.time += deltaTime;
 

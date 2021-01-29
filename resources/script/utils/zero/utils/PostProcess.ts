@@ -11,7 +11,7 @@ export class PostProcess {
   public materials: THREE.RawShaderMaterial[];
 
   public writeTarget: THREE.WebGLRenderTarget;
-  // public readTarget: THREE.WebGLRenderTarget;
+  public readTarget: THREE.WebGLRenderTarget;
 
   protected renderer: THREE.WebGLRenderer;
   protected resolution: THREE.Vector2;
@@ -34,10 +34,10 @@ export class PostProcess {
 
     this.materials = [];
 
-    // this.readTarget = new THREE.WebGLRenderTarget(resolution.x, resolution.y, {
-    //   magFilter: THREE.LinearFilter,
-    //   minFilter: THREE.LinearFilter
-    // });
+    this.readTarget = new THREE.WebGLRenderTarget(resolution.x, resolution.y, {
+      magFilter: THREE.LinearFilter,
+      minFilter: THREE.LinearFilter
+    });
 
     this.writeTarget = new THREE.WebGLRenderTarget(resolution.x, resolution.y,{
       magFilter: THREE.LinearFilter,
@@ -88,67 +88,25 @@ export class PostProcess {
     this.renderer.clear();
     this.renderer.render(origScene, origCamera);
 
+    this.materials.forEach((material, index) => {
+      this.swapTarget();
+
+      const { texture } = this.readTarget;
+      material.uniforms.bufferTexture.value = texture;
+      this.mesh.material = material;
+
+      if(index === this.materials.length - 1) {
+        this.renderer.setRenderTarget(defaultTarget);
+      } else {
+        this.renderer.setRenderTarget(this.writeTarget);
+      }
+
+      this.renderer.clear();
+      this.renderer.render(this.scene, this.camera);
+    });
 
 
-    const { texture } = this.writeTarget;
-
-    const material = this.materials[0] as THREE.RawShaderMaterial;
-    material.uniformsNeedUpdate = true;
-    material.needsUpdate = true;
-    material.uniforms.bufferTexture.value = texture;
-    this.mesh.material = material;
-
-
-
-    this.renderer.setRenderTarget(null);
-    this.renderer.clear();
-    this.renderer.render(this.scene, this.camera);
-
-
-    //////////////////////////
-
-    // const { texture } = this.writeTarget;
-
-
-    // const material = this.materials[0] as THREE.RawShaderMaterial;
-
-    // this.renderer.setRenderTarget(null);
-    // material.uniforms.bufferTexture.value = this.readTarget.texture;
-    // material.uniforms.time.value = this.time;
-    // material.needsUpdate = true;
-    // material.uniformsNeedUpdate = true;
-    // this.mesh.material = material;
-    // this.renderer.render(this.scene, this.camera);
-
-
-    //////////////////////////
-
-    // this.swapTarget();
-
-    // this.materials.forEach((material, index) => {
-
-    //   this.renderer.setRenderTarget(this.writeTarget);
-    //   this.renderer.clear();
-
-    //   material.uniforms.bufferTexture.value = this.readTarget.texture;
-    //   material.uniforms.time.value = this.time;
-
-    //   this.mesh.material = material;
-    //   const shaderMaterial = this.mesh.material as THREE.RawShaderMaterial;
-    //   shaderMaterial.uniforms.bufferTexture.value = this.readTarget.texture;
-    //   shaderMaterial.uniforms.time.value = this.time;
-    //   // this.renderer.setRenderTarget(defaultTarget);
-    //   // this.renderer.setRenderTarget(null);
-    //   // this.renderer.render(this.scene, this.camera);
-
-    //   this.swapTarget();
-
-    // });
-
-
-    // this.renderer.setRenderTarget(defaultTarget);
-    // this.renderer.render(this.scene, this.camera);
-    // return this.readTarget.texture;
+    return this.readTarget.texture;
   }
 
   public resize(resolution?: THREE.Vector2) {
@@ -158,7 +116,7 @@ export class PostProcess {
 
   private setResolution(resolution: THREE.Vector2) {
     this.resolution = resolution;
-    // this.readTarget.setSize( this.resolution.x, this.resolution.y );
+    this.readTarget.setSize( this.resolution.x, this.resolution.y );
     this.writeTarget.setSize( this.resolution.x, this.resolution.y );
 
     this.materials.forEach(material => {
@@ -167,11 +125,11 @@ export class PostProcess {
     });
   }
 
-  // private swapTarget() {
-  //   const tmp = this.writeTarget.clone();
-  //   this.writeTarget = this.readTarget.clone();
-  //   this.readTarget = tmp;
-  // }
+  private swapTarget() {
+    const tmp = this.writeTarget;
+    this.writeTarget = this.readTarget;
+    this.readTarget = tmp;
+  }
 
   public setGui(gui: GUI) {
     this.gui = gui;
