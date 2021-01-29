@@ -3,7 +3,6 @@ import * as ZERO from '../../../utils/zero';
 
 import { Contents } from './Contents';
 
-// import noiseImage from '../../../../texture/noise/snoise.png';
 import uvTex from '../../../../texture/uv.jpg';
 
 export class Init {

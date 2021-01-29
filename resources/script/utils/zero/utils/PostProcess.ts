@@ -66,8 +66,8 @@ export abstract class PostProcess {
 
     const material = new THREE.RawShaderMaterial(params);
 
-    material.uniformsNeedUpdate = true;
-    material.needsUpdate = true;
+    // material.uniformsNeedUpdate = true;
+    // material.needsUpdate = true;
     this.materials.push(material);
 
     return this;
