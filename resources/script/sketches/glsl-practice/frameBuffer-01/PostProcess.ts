@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as ZERO from '../../../utils/zero';
 
-import { GUI } from 'three/examples/jsm/libs/dat.gui.module';
+import Pane from 'tweakpane';
 
 import ppShader from './shaders/postProcess/postProcess.frag';
 import antialias from './shaders/postProcess/antialias.frag';
@@ -11,7 +11,7 @@ export class PostProcess extends ZERO.PostProcess {
   constructor(renderer: THREE.WebGLRenderer, resolution: THREE.Vector2 ) {
     super(renderer, resolution);
     this.name = 'Post Process';
-    console.info(this.name);
+
     this.add({
       fragmentShader: ppShader,
       uniforms: {
@@ -36,15 +36,34 @@ export class PostProcess extends ZERO.PostProcess {
     });
   }
 
-  public setGui(gui: GUI) {
-    super.setGui(gui);
+  public setGui(pane: Pane) {
+    super.setGui(pane);
 
     const uniform0 = this.materials[0].uniforms;
     const uniform1 = this.materials[1].uniforms;
 
-    this.guiFolder.add(uniform0.brightness, 'value', 0, 1, 0.01).name('brightness');
-    this.guiFolder.add(uniform0.saturation, 'value', 0, 1, 0.01).name('saturation');
-    this.guiFolder.add(uniform0.vignett, 'value', 0, 1, 0.01).name('vignett');
-    this.guiFolder.add(uniform1.isFxaa, 'value').name('use FXAA');
+    this.pane = pane;
+
+    this.pane.addInput(uniform0.brightness, 'value', {
+      label: 'brightness',
+      min: 0,
+      max: 1,
+      step: 0.01,
+    });
+    this.pane.addInput(uniform0.saturation, 'value', {
+      label: 'saturation',
+      min: 0,
+      max: 1,
+      step: 0.01,
+    });
+    this.pane.addInput(uniform0.vignett, 'value', {
+      label: 'vignett',
+      min: 0,
+      max: 1,
+      step: 0.01,
+    });
+    this.pane.addInput(uniform1.isFxaa, 'value', {
+      label: 'use Fxaa',
+    });
   }
 }

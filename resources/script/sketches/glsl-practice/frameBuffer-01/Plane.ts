@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { GUI } from 'three/examples/jsm/libs/dat.gui.module';
+
+import Pane from 'tweakpane';
 
 import { PlaneBufferGeometry, RawShaderMaterial } from 'three';
 
@@ -12,7 +13,7 @@ import planeFrag from './shaders/plane.frag';
 export class Plane extends THREE.Mesh {
   public isBillboard: boolean;
 
-  private gui?: GUI;
+  private pane?: Pane;
 
 
   constructor(assets: TextureAssets) {
@@ -48,7 +49,7 @@ export class Plane extends THREE.Mesh {
     (this.material as THREE.RawShaderMaterial).uniforms.time.value += deltaTIme;
   }
 
-  public setGui(gui: GUI) {
-    this.gui = gui;
+  public setGui(pane: Pane) {
+    this.pane = pane;
   }
 }

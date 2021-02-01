@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-
 import Stats from 'three/examples/jsm/libs/stats.module';
-import { GUI } from 'three/examples/jsm/libs/dat.gui.module';
+
+import Pane from 'tweakpane';
 
 import { TextureAssets } from '../../../utils/zero';
 
@@ -23,7 +23,7 @@ export class Contents {
   private postProcess: PostProcess;
 
   private stats: Stats = Stats();
-  private gui: GUI = new GUI();
+  private pane: Pane = new Pane();
 
   constructor(canvas: HTMLCanvasElement, resolution: THREE.Vector2) {
     this.resolution = resolution;
@@ -86,7 +86,7 @@ export class Contents {
   }
 
   private setGui() {
-    this.plane!.setGui(this.gui);
-    this.postProcess.setGui(this.gui);
+    this.plane!.setGui(this.pane);
+    this.postProcess.setGui(this.pane);
   }
 }

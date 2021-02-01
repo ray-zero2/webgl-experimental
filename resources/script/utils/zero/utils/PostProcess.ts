@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { GUI } from 'three/examples/jsm/libs/dat.gui.module';
+
+import Pane from 'tweakpane';
 
 import simpleVertex from '../shader/simpleVertex.glsl';
 
@@ -19,7 +20,7 @@ export abstract class PostProcess {
   protected camera: THREE.Camera;
   protected mesh: THREE.Mesh;
 
-  protected gui?: GUI;
+  protected pane?: Pane;
   protected guiFolder?: any;
 
   constructor(renderer: THREE.WebGLRenderer, resolution: THREE.Vector2) {
@@ -34,7 +35,7 @@ export abstract class PostProcess {
 
     this.readTarget = new THREE.WebGLRenderTarget(resolution.x, resolution.y, {
       magFilter: THREE.LinearFilter,
-      minFilter: THREE.LinearFilter
+      minFilter: THREE.LinearFilter,
     });
 
     this.writeTarget = new THREE.WebGLRenderTarget(resolution.x, resolution.y,{
@@ -125,9 +126,11 @@ export abstract class PostProcess {
     this.readTarget = tmp;
   }
 
-  public setGui(gui: GUI) {
-    this.gui = gui;
-    this.guiFolder = gui.addFolder(this.name);
-    this.guiFolder.open();
+  public setGui(pane: Pane) {
+    this.pane = pane;
+    this.pane.addFolder({
+      title: this.name,
+      expanded: true
+    })
   }
 }
