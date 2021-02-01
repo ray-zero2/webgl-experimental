@@ -18,7 +18,7 @@ void main(){
   vec3 rgb = mix(vec3(simpleGray), samplerColor.rgb, saturation);
 
   vec2 normalizedUv = vUv * 2. - 1.;
-  float vig = vignett - length(normalizedUv);
+  float vig = clamp(vignett * 2. - length(normalizedUv), .0, 1.);
 
   gl_FragColor = vec4(rgb * vig * vec3(brightness), 1.0);
 }
