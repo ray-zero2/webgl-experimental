@@ -46,6 +46,7 @@ export class Contents {
       far: 1000,
       element: canvas,
       enableDamping: true,
+      dampingFactor: 0.1
     });
 
     this.plane = null;
