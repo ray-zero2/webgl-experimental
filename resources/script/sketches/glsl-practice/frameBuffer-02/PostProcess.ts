@@ -6,32 +6,34 @@ import Pane from 'tweakpane';
 import ppShader from './shaders/postProcess/postProcess.frag';
 import antialias from './shaders/postProcess/antialias.frag';
 
+import noiseTexture from '../../../../texture/noise/snoise.png';
+
 export class PostProcess extends ZERO.PostProcess {
 
-  constructor(renderer: THREE.WebGLRenderer, resolution: THREE.Vector2 ) {
-    super(renderer, resolution);
+  constructor(renderer: THREE.WebGLRenderer, resolution: THREE.Vector2, targetOptions?: THREE.WebGLRenderTargetOptions ) {
+    super(renderer, resolution, targetOptions);
     this.name = 'Post Process';
 
     this.add({
-      fragmentShader: ppShader,
-      uniforms: {
-        brightness: {
-          value: 1.0,
-        },
-        saturation: {
-          value: 1.0
-        },
-        vignett: {
-          value: 1.0
-        }
-      }
-    })
-    .add({
       fragmentShader: antialias,
       uniforms: {
         isFxaa: {
           value: true,
         },
+      }
+    })
+    .add({
+      fragmentShader: ppShader,
+      uniforms: {
+        saturation: {
+          value: 0,
+        },
+        useNoiseTexture: {
+          value: false,
+        },
+        noiseTexture: {
+          value: new THREE.Texture(noiseTexture),
+        }
       }
     });
   }
@@ -44,26 +46,17 @@ export class PostProcess extends ZERO.PostProcess {
 
     this.pane = pane;
 
-    this.pane.addInput(uniform0.brightness, 'value', {
-      label: 'brightness',
-      min: 0,
-      max: 1,
-      step: 0.01,
+    this.pane.addInput(uniform0.isFxaa, 'value', {
+      label: 'use antialias',
     });
-    this.pane.addInput(uniform0.saturation, 'value', {
+    this.pane.addInput(uniform1.saturation, 'value', {
       label: 'saturation',
       min: 0,
       max: 1,
-      step: 0.01,
+      step: 0.01
     });
-    this.pane.addInput(uniform0.vignett, 'value', {
-      label: 'vignett',
-      min: 0,
-      max: 1,
-      step: 0.01,
-    });
-    this.pane.addInput(uniform1.isFxaa, 'value', {
-      label: 'use antialias',
+    this.pane.addInput(uniform1.useNoiseTexture, 'value', {
+      label: 'use noiseTex'
     });
   }
 }

@@ -4,6 +4,11 @@ import Pane from 'tweakpane';
 
 import simpleVertex from '../shader/simpleVertex.glsl';
 
+interface RenderTargetIndex {
+  read: number;
+  write: number;
+}
+
 export abstract class PostProcess {
 
   public name: string;
@@ -11,9 +16,11 @@ export abstract class PostProcess {
 
   public materials: THREE.RawShaderMaterial[];
 
-  public writeTarget: THREE.WebGLRenderTarget;
-  public readTarget: THREE.WebGLRenderTarget;
-
+  protected renderTargets: [
+    THREE.WebGLRenderTarget,
+    THREE.WebGLRenderTarget
+  ];
+  protected renderTargetIndex: RenderTargetIndex;
   protected renderer: THREE.WebGLRenderer;
   protected resolution: THREE.Vector2;
   protected scene: THREE.Scene;
@@ -23,34 +30,25 @@ export abstract class PostProcess {
   protected pane?: Pane;
   protected guiFolder?: any;
 
-  constructor(renderer: THREE.WebGLRenderer, resolution: THREE.Vector2) {
+  constructor(renderer: THREE.WebGLRenderer, resolution: THREE.Vector2, targetOption?: THREE.WebGLRenderTargetOptions) {
     this.name = 'Post Effect';
-
     this.time = 0;
-
     this.renderer = renderer;
     this.resolution = resolution;
-
+    this.renderTargets = [
+      new THREE.WebGLRenderTarget(resolution.x, resolution.y, targetOption),
+      new THREE.WebGLRenderTarget(resolution.x, resolution.y, targetOption)
+    ];
+    this.renderTargetIndex = {
+      write: 0,
+      read: 1,
+    };
     this.materials = [];
-
-    this.readTarget = new THREE.WebGLRenderTarget(resolution.x, resolution.y, {
-      magFilter: THREE.LinearFilter,
-      minFilter: THREE.LinearFilter,
-    });
-
-    this.writeTarget = new THREE.WebGLRenderTarget(resolution.x, resolution.y,{
-      magFilter: THREE.LinearFilter,
-      minFilter: THREE.LinearFilter
-    });
-
-
     this.scene = new THREE.Scene();
     this.camera = new THREE.OrthographicCamera(- 1, 1, 1, - 1, 0, 1);
 
     const plane = new THREE.PlaneBufferGeometry(2, 2);
-
     this.mesh = new THREE.Mesh(plane);
-
 
     this.scene.add(this.mesh);
   }
@@ -65,65 +63,41 @@ export abstract class PostProcess {
 
     if(!params.fragmentShader) throw new Error('post process shader is not found');
 
-    const material = new THREE.RawShaderMaterial(params);
-
-    // material.uniformsNeedUpdate = true;
-    // material.needsUpdate = true;
-    this.materials.push(material);
-
+    this.materials.push(new THREE.RawShaderMaterial(params));
     return this;
   }
 
-  public render(origScene: THREE.Scene, origCamera: THREE.Camera, deltaTime: number): THREE.Texture {
+  public render(origScene: THREE.Scene, origCamera: THREE.Camera, deltaTime: number) {
     this.time += deltaTime;
 
     const defaultTarget = this.renderer.getRenderTarget();
-
-    this.renderer.setRenderTarget(this.writeTarget);
+    const indices = this.renderTargetIndex;
+    this.renderer.setRenderTarget(this.renderTargets[indices.write]);
     this.renderer.clear();
     this.renderer.render(origScene, origCamera);
+    this.swapTargetIndex();
 
     this.materials.forEach((material, index) => {
-      this.swapTarget();
-
-      const { texture } = this.readTarget;
+      const { texture } = this.renderTargets[indices.read];
       material.uniforms.bufferTexture.value = texture;
+      material.uniforms.time.value = this.time;
       this.mesh.material = material;
 
       if(index === this.materials.length - 1) {
         this.renderer.setRenderTarget(defaultTarget);
       } else {
-        this.renderer.setRenderTarget(this.writeTarget);
+        this.renderer.setRenderTarget(this.renderTargets[indices.write]);
       }
 
       this.renderer.clear();
       this.renderer.render(this.scene, this.camera);
+      this.swapTargetIndex();
     });
-
-
-    return this.readTarget.texture;
   }
 
   public resize(resolution?: THREE.Vector2) {
     if(!resolution) return;
     this.setResolution(resolution);
-  }
-
-  private setResolution(resolution: THREE.Vector2) {
-    this.resolution = resolution;
-    this.readTarget.setSize( this.resolution.x, this.resolution.y );
-    this.writeTarget.setSize( this.resolution.x, this.resolution.y );
-
-    this.materials.forEach(material => {
-      const resolutionParam = material.uniforms?.resolution;
-      if(resolutionParam) resolutionParam.value = resolution;
-    });
-  }
-
-  private swapTarget() {
-    const tmp = this.writeTarget;
-    this.writeTarget = this.readTarget;
-    this.readTarget = tmp;
   }
 
   public setGui(pane: Pane) {
@@ -132,5 +106,23 @@ export abstract class PostProcess {
       title: this.name,
       expanded: true
     })
+  }
+
+  private setResolution(resolution: THREE.Vector2) {
+    this.resolution = resolution;
+    this.renderTargets.forEach(target => {
+      target.setSize( this.resolution.x, this.resolution.y );;
+    })
+
+    this.materials.forEach(material => {
+      const resolutionParam = material.uniforms?.resolution;
+      if(resolutionParam) resolutionParam.value = resolution;
+    });
+  }
+
+  private swapTargetIndex() {
+    const indices = this.renderTargetIndex;
+    indices.write = (indices.write + 1) % 2;
+    indices.read = (indices.read + 1) % 2;
   }
 }
