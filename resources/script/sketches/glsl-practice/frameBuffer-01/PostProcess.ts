@@ -63,7 +63,7 @@ export class PostProcess extends ZERO.PostProcess {
       step: 0.01,
     });
     this.pane.addInput(uniform1.isFxaa, 'value', {
-      label: 'use Fxaa',
+      label: 'use antialias',
     });
   }
 }
