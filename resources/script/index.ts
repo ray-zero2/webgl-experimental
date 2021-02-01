@@ -17,6 +17,7 @@ const getModule = (pageId: string) => {
       // add sketch modules
         case 'gradation': return import(/* webpackChunkName: 'gradation' */`./sketches/gradation/Init`);
         case 'frameBuffer-01': return import(/* webpackChunkName: 'frameBuffer-01' */`./sketches/glsl-practice/frameBuffer-01/Init`);
+        case 'frameBuffer-02': return import(/* webpackChunkName: 'frameBuffer-02' */`./sketches/glsl-practice/frameBuffer-02/Init`);
         default:
           throw new Error(`${pageId} Init Module is not found`);
       }
