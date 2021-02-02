@@ -23,6 +23,7 @@ export abstract class PostProcess {
   protected renderTargetIndex: RenderTargetIndex;
   protected renderer: THREE.WebGLRenderer;
   protected resolution: THREE.Vector2;
+  protected pixelRatio: number;
   protected scene: THREE.Scene;
   protected camera: THREE.Camera;
   protected mesh: THREE.Mesh;
@@ -35,9 +36,10 @@ export abstract class PostProcess {
     this.time = 0;
     this.renderer = renderer;
     this.resolution = resolution;
+    this.pixelRatio = renderer.getPixelRatio();
     this.renderTargets = [
-      new THREE.WebGLRenderTarget(resolution.x, resolution.y, targetOption),
-      new THREE.WebGLRenderTarget(resolution.x, resolution.y, targetOption)
+      new THREE.WebGLRenderTarget(resolution.x * this.pixelRatio, resolution.y * this.pixelRatio, targetOption),
+      new THREE.WebGLRenderTarget(resolution.x * this.pixelRatio, resolution.y * this.pixelRatio, targetOption)
     ];
     this.renderTargetIndex = {
       write: 0,
@@ -111,12 +113,12 @@ export abstract class PostProcess {
   private setResolution(resolution: THREE.Vector2) {
     this.resolution = resolution;
     this.renderTargets.forEach(target => {
-      target.setSize( this.resolution.x, this.resolution.y );;
+      target.setSize( this.resolution.x * this.pixelRatio, this.resolution.y * this.pixelRatio );
     })
 
     this.materials.forEach(material => {
       const resolutionParam = material.uniforms?.resolution;
-      if(resolutionParam) resolutionParam.value = resolution;
+      if(resolutionParam) resolutionParam.value = resolution.multiplyScalar(this.pixelRatio);
     });
   }
 
