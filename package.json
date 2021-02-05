@@ -33,6 +33,7 @@
   "dependencies": {
     "glsl-easings": "^1.0.0",
     "glsl-fxaa": "^3.0.0",
+    "gsap": "^3.6.0",
     "three": "^0.124.0"
   }
 }
