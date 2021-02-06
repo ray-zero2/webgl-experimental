@@ -113,8 +113,8 @@ export abstract class PostProcess {
   private setResolution(resolution: THREE.Vector2) {
     this.resolution = resolution.clone();
 
-    const x = resolution.x * this.pixelRatio;
-    const y = resolution.y * this.pixelRatio;
+    const x = this.resolution.x * this.pixelRatio;
+    const y = this.resolution.y * this.pixelRatio;
 
     this.renderTargets.forEach(target => {
       target.setSize( x, y );
