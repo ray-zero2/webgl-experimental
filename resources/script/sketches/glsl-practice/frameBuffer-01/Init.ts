@@ -54,7 +54,7 @@ export class Init {
   }
 
   protected resize() {
-    this.resolution = new THREE.Vector2(
+    this.resolution.set(
       document.body.clientWidth,
       window.innerHeight
     );

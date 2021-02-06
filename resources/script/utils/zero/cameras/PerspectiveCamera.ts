@@ -43,12 +43,12 @@ export class PerspectiveCamera extends THREE.PerspectiveCamera {
     this.lookAt(new THREE.Vector3(0, 0, 0));
   }
 
-  resize(resolution) {
+  resize(resolution: THREE.Vector2) {
     this.aspect = resolution.x / resolution.y;
     this.updateProjectionMatrix();
   }
 
-  update(deltaTime) {
+  update(deltaTime: number) {
     this.time += deltaTime;
 
     if (!this.controls) return;

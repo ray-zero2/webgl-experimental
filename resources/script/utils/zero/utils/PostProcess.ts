@@ -111,14 +111,18 @@ export abstract class PostProcess {
   }
 
   private setResolution(resolution: THREE.Vector2) {
-    this.resolution = resolution;
+    this.resolution = resolution.clone();
+
+    const x = resolution.x * this.pixelRatio;
+    const y = resolution.y * this.pixelRatio;
+
     this.renderTargets.forEach(target => {
-      target.setSize( this.resolution.x * this.pixelRatio, this.resolution.y * this.pixelRatio );
+      target.setSize( x, y );
     })
 
     this.materials.forEach(material => {
       const resolutionParam = material.uniforms?.resolution;
-      if(resolutionParam) resolutionParam.value = resolution.multiplyScalar(this.pixelRatio);
+      if(resolutionParam) resolutionParam.value = this.resolution.multiplyScalar(this.pixelRatio);
     });
   }
 

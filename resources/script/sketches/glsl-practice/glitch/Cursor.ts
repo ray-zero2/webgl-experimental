@@ -7,7 +7,7 @@ interface CursorOptions {
 }
 
 export class Cursor {
-  static transformToNormalizedDeviceCoord(position, resolution) {
+  static transformToNormalizedDeviceCoord(position: THREE.Vector2, resolution: THREE.Vector2) {
     const resolutionX = resolution.x;
     const resolutionY = resolution.y;
     if (resolutionX === 0 || resolutionY === 0) return new THREE.Vector2(0, 0);
@@ -33,7 +33,7 @@ export class Cursor {
   public isDumping: boolean;
   public canHover: boolean;
 
-  constructor(resolution: THREE.Vector2, cursorOption: Partial<CursorMode>) {
+  constructor(resolution: THREE.Vector2, cursorOption: Partial<CursorOptions>) {
     if(cursorOption.useRaycaster) this.raycaster = new THREE.Raycaster();
     this.resolution = resolution;
     this.position = new THREE.Vector2();
