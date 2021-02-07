@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Hello } from './Hello';
+import { Hello } from '../utils/Hello';
 
 interface BaseParams extends THREE.WebGLRendererParameters {
   skipHello?: boolean;

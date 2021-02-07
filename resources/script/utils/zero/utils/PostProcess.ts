@@ -1,6 +1,9 @@
 import * as THREE from 'three';
+import { Hello } from './Hello';
 
 import Pane from 'tweakpane';
+import { FolderApi } from "tweakpane/dist/types/api/folder";
+
 
 import simpleVertex from '../shader/simpleVertex.glsl';
 
@@ -29,9 +32,11 @@ export abstract class PostProcess {
   protected mesh: THREE.Mesh;
 
   protected pane?: Pane;
-  protected guiFolder?: any;
+  protected guiFolder?: FolderApi;
 
   constructor(renderer: THREE.WebGLRenderer, resolution: THREE.Vector2, targetOption?: THREE.WebGLRenderTargetOptions) {
+    if(!window['ZERO']) window['ZERO'] = new Hello();
+
     this.name = 'Post Effect';
     this.time = 0;
     this.renderer = renderer;
@@ -104,10 +109,10 @@ export abstract class PostProcess {
 
   public setGui(pane: Pane) {
     this.pane = pane;
-    this.pane.addFolder({
+    this.guiFolder = this.pane.addFolder({
       title: this.name,
       expanded: true
-    })
+    });
   }
 
   private setResolution(resolution: THREE.Vector2) {
@@ -126,9 +131,14 @@ export abstract class PostProcess {
     });
   }
 
+  private setNextIndex(currentIndex: number): number {
+    const nextIndex = (currentIndex + 1) % 2;
+    return nextIndex;
+  }
+
   private swapTargetIndex() {
     const indices = this.renderTargetIndex;
-    indices.write = (indices.write + 1) % 2;
-    indices.read = (indices.read + 1) % 2;
+    indices.write = this.setNextIndex(indices.write);
+    indices.read = this.setNextIndex(indices.read);
   }
 }

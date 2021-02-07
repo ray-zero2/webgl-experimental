@@ -5,6 +5,7 @@ import {
   LoadingManager,
 } from 'three';
 
+import { Hello } from './Hello';
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -37,6 +38,7 @@ export class AssetLoader {
   protected objData: OBJAssets;
 
   constructor(callbacks: Partial<Callbacks>) {
+    if(!window['ZERO']) window['ZERO'] = new Hello();
     this.manager = new LoadingManager();
 
     if(callbacks.onLoad) this.manager.onLoad = callbacks.onLoad;
