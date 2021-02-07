@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import * as ZERO from '../../../utils/zero';
 
 import { Contents } from './Contents';
+import { Cursor } from './Cursor';
 
 
 export class Init {
@@ -11,6 +12,7 @@ export class Init {
   public clock: THREE.Clock;
 
   protected contents: Contents;
+  protected cursor: Cursor;
   protected assetLoader: ZERO.AssetLoader;
 
   constructor(canvas: HTMLCanvasElement) {
@@ -27,6 +29,10 @@ export class Init {
     this.clock = new THREE.Clock(true);
 
     this.contents = new Contents(this.canvas, this.resolution);
+    this.cursor = new Cursor(this.resolution, {
+      element: this.canvas,
+      useRaycaster: true,
+    });
 
     this.assetLoader = new ZERO.AssetLoader({
       onLoad: this.onLoad.bind(this)

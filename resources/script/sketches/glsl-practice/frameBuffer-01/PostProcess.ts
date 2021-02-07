@@ -42,27 +42,26 @@ export class PostProcess extends ZERO.PostProcess {
     const uniform0 = this.materials[0].uniforms;
     const uniform1 = this.materials[1].uniforms;
 
-    this.pane = pane;
-
-    this.pane.addInput(uniform0.brightness, 'value', {
+    if(!this.pane || !this.guiFolder) return;
+    this.guiFolder.addInput(uniform0.brightness, 'value', {
       label: 'brightness',
       min: 0,
       max: 1,
       step: 0.01,
     });
-    this.pane.addInput(uniform0.saturation, 'value', {
+    this.guiFolder.addInput(uniform0.saturation, 'value', {
       label: 'saturation',
       min: 0,
       max: 1,
       step: 0.01,
     });
-    this.pane.addInput(uniform0.vignett, 'value', {
+    this.guiFolder.addInput(uniform0.vignett, 'value', {
       label: 'vignett',
       min: 0,
       max: 1,
       step: 0.01,
     });
-    this.pane.addInput(uniform1.isFxaa, 'value', {
+    this.guiFolder.addInput(uniform1.isFxaa, 'value', {
       label: 'use antialias',
     });
   }

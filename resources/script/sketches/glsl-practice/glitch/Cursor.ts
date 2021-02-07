@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 interface CursorOptions {
+  element?: HTMLCanvasElement;
   useRaycaster: boolean;
   enableDamping: boolean;
   dampingFactor: number;
@@ -23,6 +24,7 @@ export class Cursor {
     return transformedPosition;
   }
 
+
   public raycaster?: THREE.Raycaster;
   public resolution: THREE.Vector2;
   public position: THREE.Vector2;
@@ -33,8 +35,8 @@ export class Cursor {
   public isDumping: boolean;
   public canHover: boolean;
 
-  constructor(resolution: THREE.Vector2, cursorOption: Partial<CursorOptions>) {
-    if(cursorOption.useRaycaster) this.raycaster = new THREE.Raycaster();
+  constructor(resolution: THREE.Vector2, cursorOption?: Partial<CursorOptions>) {
+    if(cursorOption?.useRaycaster) this.raycaster = new THREE.Raycaster();
     this.resolution = resolution;
     this.position = new THREE.Vector2();
     this.start = new THREE.Vector2();
@@ -77,6 +79,6 @@ export class Cursor {
   }
 
   public bind() {
-    window.addEventListener('mousedown', this.touchStart.bind());
+    window.addEventListener('mousedown', this.touchStart.bind(this, Event));
   }
 }

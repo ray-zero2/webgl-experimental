@@ -44,18 +44,23 @@ export class PostProcess extends ZERO.PostProcess {
     const uniform0 = this.materials[0].uniforms;
     const uniform1 = this.materials[1].uniforms;
 
-    this.pane = pane;
-
-    this.pane.addInput(uniform0.isFxaa, 'value', {
+    if(!this.pane || !this.guiFolder) return;
+    const postProcess1 = this.guiFolder.addFolder({
+      title: 'process1'
+    });
+    const postProcess2 = this.guiFolder.addFolder({
+      title: 'process2'
+    });
+    postProcess1.addInput(uniform0.isFxaa, 'value', {
       label: 'use antialias',
     });
-    this.pane.addInput(uniform1.saturation, 'value', {
+    postProcess2.addInput(uniform1.saturation, 'value', {
       label: 'saturation',
       min: 0,
       max: 1,
       step: 0.01
     });
-    this.pane.addInput(uniform1.useNoiseTexture, 'value', {
+    postProcess2.addInput(uniform1.useNoiseTexture, 'value', {
       label: 'use noiseTex'
     });
   }
