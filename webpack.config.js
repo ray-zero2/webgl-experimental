@@ -49,8 +49,8 @@ module.exports = (env, argv) => {
         // glsl : glslify併用のため type: 'asset/source'ではなくloaderを使用
         {
           test: /\.(glsl|vs|fs|vert|frag)$/,
-          use: ['raw-loader', 'glslify-loader'],
-          type: 'javascript/auto', // raw-loader, url-loader, file-loaderを使用する場合は必要
+          use: ['glslify-loader'],
+          type: 'asset/source',
         },
 
         // images
