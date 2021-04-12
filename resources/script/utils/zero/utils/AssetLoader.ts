@@ -6,7 +6,7 @@ import {
 } from 'three';
 
 import { Hello } from './Hello';
-import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 interface AssetParams {
@@ -80,7 +80,7 @@ export class AssetLoader {
 
   protected loadObj(dataArray: AssetParams[]) {
     dataArray.forEach(data => {
-      const loader = new OBJLoader2(this.manager);
+      const loader = new OBJLoader(this.manager);
       loader.crossOrigin = 'use-credentials';
       loader.load(data.src, obj => {
         this.objData[data.name] = obj;

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Hello } from './Hello';
 
 import Pane from 'tweakpane';
-import { FolderApi } from "tweakpane/dist/types/api/folder";
+import { FolderApi } from "tweakpane/dist/types/blade/folder/api/folder";
 
 
 import simpleVertex from '../shader/simpleVertex.glsl';
